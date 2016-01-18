@@ -1,0 +1,27 @@
+#include <amxmodx>
+
+public plugin_init( )
+{
+	register_plugin(" Awp no zoom kill", "1.0", "Fuffy" );
+
+	register_event( "Damage", "tdmg", "a" );
+}
+
+public tdmg( id )
+{
+	static Attacker; Attacker = get_user_attacker( id );
+	
+	if( !get_user_weapon(Attacker) == CSW_AWP || cs_get_user_zoom( id ) || !is_user_alive( Attacker ))
+		return PLUGIN_HANDLED;
+
+	message_begin( MSG_ALL, get_user_msgid("DeathMsg"),{0,0,0},0)
+	write_byte(Attacker)
+	write_byte(id)
+	write_string(1)
+	write_string("shockwave")
+	message_end()
+
+	set_user_frags( Attacker, get_user_frags( Attacker ) + 1 );
+	return PLUGIN_CONTINUE;
+
+}
