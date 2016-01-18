@@ -6,6 +6,7 @@ public plugin_init( )
 {
 	register_plugin(" Awp no zoom kill", "1.0", "Fuffy" );
 
+	// thanks Connor.
 	register_event("Damage", "tdmg", "b", "2!0", "3=0", "4!0")
 }
 
@@ -14,7 +15,7 @@ public tdmg( id )
 	static iDmg; iDmg = read_data( 2 );
 	static Attacker; Attacker = get_user_attacker( id );
 	
-	if( !is_user_alive( Attacker ) || iDmg >= 100 )
+	if( !is_user_alive( Attacker ) || iDmg >= get_user_health(id) || !iDmg )
 		return PLUGIN_HANDLED;
 
 	if( get_user_weapon( Attacker ) == CSW_AWP && !cs_get_user_zoom(Attacker) )
