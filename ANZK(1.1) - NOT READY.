@@ -1,0 +1,57 @@
+#include <amxmodx>
+#include <cstrike>
+#include <fun>
+
+public plugin_init( )
+{
+	register_plugin(" Awp no zoom kill", "1.0", "Fuffy" );
+
+	register_event("Damage", "tdmg", "b", "2!0", "3=0", "4!0")
+}
+
+public tdmg( id )
+{
+	static iDmg; iDmg = read_data( 2 );
+	static Attacker; Attacker = get_user_attacker( id );
+	
+	if( !is_user_alive( Attacker ) || iDmg >= 100 )
+		return PLUGIN_HANDLED;
+
+	if( get_user_weapon( Attacker ) == CSW_AWP && !cs_get_user_zoom(Attacker) )
+	{
+		message_begin( MSG_ALL, get_user_msgid("DeathMsg"),{0,0,0},0)
+		write_byte(Attacker)
+		write_byte(id)
+		write_byte(0)
+		write_string("awp")
+		message_end()
+
+		set_user_frags( Attacker, get_user_frags( Attacker ) + 1 )
+
+		message_begin( MSG_ONE, get_user_msgid( "ScreenFade" ), { 0, 0, 0 }, Attacker );
+	
+		write_short( 5 << 10 );
+		write_short( 5 << 10 );
+		write_short( 5 << 12 );
+	
+		write_byte( 220 );
+		write_byte( 0 );
+		write_byte( 0 );
+		write_byte( 50 );
+	
+		message_end( );
+
+		message_begin( MSG_ONE, get_user_msgid( "ScreenShake" ), { 0, 0, 0 }, Attacker );
+	
+		write_short( floatround( 4096.0 * 3.0, floatround_round ) );
+		write_short( floatround( 4096.0 * 3.0, floatround_round ) );
+		write_short( 1 << 13 );
+	
+		message_end( );
+
+		user_silentkill(id)
+		return PLUGIN_HANDLED
+	}
+	return PLUGIN_HANDLED;
+
+}
